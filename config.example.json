@@ -1,0 +1,7 @@
+{
+  "channelName": "cli-stream",
+  "spacebro": {
+    "address": "localhost",
+    "port": 8888
+  }
+}

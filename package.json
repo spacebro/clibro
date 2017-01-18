@@ -1,0 +1,31 @@
+{
+  "name": "spacebro-client-cli",
+  "version": "1.0.0",
+  "description": "Command Line Interface for spacebro-client",
+  "main": "index.js",
+  "bin": {
+    "spacebro-client-cli": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soixantecircuits/spacebro-client-cli.git"
+  },
+  "keywords": [
+    "spacebro",
+    "client",
+    "cli"
+  ],
+  "author": "Soixante circuits",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soixantecircuits/spacebro-client-cli/issues"
+  },
+  "homepage": "https://github.com/soixantecircuits/spacebro-client-cli#readme",
+  "dependencies": {
+    "spacebro-client": "^0.2.1",
+    "vorpal": "^1.11.4"
+  }
+}
