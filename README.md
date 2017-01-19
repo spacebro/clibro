@@ -11,11 +11,14 @@ Command Line Interface for spacebro-client
 
 Once installed, run `spacebro-client-cli`
 ```
+spacebro-client-cli$ help
+
   Commands:
 
-    help [command...]    Provides help for a given command.
-    exit                 Exits application.
-    emit <event> <data>  Emits a spacebro event.
-                         <event> is the event name
-                         <data> is JSON parsed data
+    help [command...]              Provides help for a given command.
+    exit                           Exits application.
+    subscribe <event>              Start listening to a specific spacebro event.
+    unsubscribe <event>            Stop listening to a specific spacebro event.
+    emit [options] <event> [data]  Emits a spacebro event with optionnal JSON parsed data.
+
 ```
