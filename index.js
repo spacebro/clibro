@@ -16,6 +16,12 @@ vorpal
   .command('subscribe <event>', 'Start listening to a specific spacebro event.')
   .action(function (args, callback) {
     spacebroClient.on(args.event, (data) => {
+      try {
+        data = JSON.stringify(data)
+      }
+      catch (e) {
+        console.log(e)
+      }
       this.log('Received event "' + args.event + '" with data ' + data)
     })
     this.log('Subscribed to event "' + args.event + '"')
