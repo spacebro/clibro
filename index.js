@@ -15,7 +15,7 @@ const intervals = []
 
 spacebroClient.connect(config.spacebro.address, config.spacebro.port,
   {
-    clientName: 'spacebro-client-cli',
+    clientName: config.clientName,
     channelName: config.channelName,
     verbose: false
   }

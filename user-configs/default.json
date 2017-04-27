@@ -1,5 +1,5 @@
 {
-  "channelName": "CLI-tool",
+  "clientName": "spacebro-client-CLI",
   "spacebro": {
     "address": "127.0.0.1",
     "port": 8888
