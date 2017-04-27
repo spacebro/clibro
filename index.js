@@ -45,32 +45,25 @@ vorpal
   })
 
 vorpal
-  .command('emit <event> [data=]', 'Emits a spacebro event with optionnal JSON parsed data.')
+  .command('emit <event> [data]', 'Emits a spacebro event with optionnal data. JSON must be surrounded by quotes.')
   .option('--interval <seconds>', 'The event will be emitted at specified interval (in seconds).')
   .option('--stop', 'Stops the interval for a given spacebro event.')
-  .action(function (args, callback) {
-    let data = null
-    try {
-      data = JSON.parse(args.data)
-    } catch (e) {
-      this.log('Parsing Error in "data" argument:\n', e)
-      return callback()
-    }
-    if (args.options.stop) {
-      clearInterval(intervals[args.event])
-      this.log('Cleared interval for event "' + args.event + '"')
-    } else if (args.options.interval) {
-      if (isNaN(args.options.interval)) {
+  .action(function ({ event, data, options }, callback) {
+    if (options.stop) {
+      clearInterval(intervals[event])
+      this.log(`Cleared interval for event ${event}`)
+    } else if (options.interval) {
+      if (isNaN(options.interval)) {
         this.log('Error: the interval must be a positive integer')
         return callback()
       }
       let interval = setInterval(() => {
-        spacebroClient.emit(args.event, data)
-      }, args.options.interval * 1000)
-      intervals[args.event] = interval
+        spacebroClient.emit(event, data)
+      }, options.interval * 1000)
+      intervals[event] = interval
     } else {
-      spacebroClient.emit(args.event, data)
-      this.log('Emitted event "' + args.event + '" with data ' + data)
+      spacebroClient.emit(event, data)
+      this.log(`Emitted event '${event}' with data ${data}`)
     }
     return callback()
   })
