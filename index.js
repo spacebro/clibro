@@ -10,7 +10,7 @@ let config = require('./user-configs/default.json')
 
 const configFileName = process.argv[2]
 const configFullPath = typeof configFileName === 'string'
-  ? configFileName[0] === '/'
+  ? /(\/|\.)/i.test(configFileName[0])
     ? configFileName
     : path.resolve(__dirname, configFileName)
   : null
