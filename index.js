@@ -10,9 +10,9 @@ let config = require('./user-configs/default.json')
 
 const configFileName = process.argv[2]
 const configFullPath = typeof configFileName === 'string'
-  ? /(\/|\.)/i.test(configFileName[0])
+  ? path.isAbsolute(configFileName[0])
     ? configFileName
-    : path.resolve(__dirname, configFileName)
+    : path.resolve(process.cwd(), configFileName)
   : null
 if (fs.existsSync(configFullPath)) {
   config = require(configFullPath)
