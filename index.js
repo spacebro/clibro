@@ -72,5 +72,5 @@ vorpal
   })
 
 vorpal
-  .delimiter('SC-CLI$')
+  .delimiter('spacebro-client$')
   .show()
