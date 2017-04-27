@@ -1,10 +1,10 @@
 {
-  "name": "spacebro-client-cli",
+  "name": "spacebro-client-CLI",
   "version": "1.0.0",
   "description": "Command Line Interface for spacebro-client",
   "main": "index.js",
   "bin": {
-    "spacebro-client-cli": "./index.js"
+    "spacebro-client": "./index.js"
   },
   "scripts": {
     "start": "node index.js"
