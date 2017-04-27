@@ -23,24 +23,24 @@ spacebroClient.connect(config.spacebro.address, config.spacebro.port,
 
 vorpal
   .command('subscribe <event>', 'Start listening to a specific spacebro event.')
-  .action(function (args, callback) {
+  .action((args, callback) => {
     spacebroClient.on(args.event, (data) => {
       try {
         data = JSON.stringify(data)
       } catch (e) {
-        console.log(e)
+        console.warn(e)
       }
-      this.log('Received event "' + args.event + '" with data ' + data)
+      vorpal.activeCommand.log('Received event "' + args.event + '" with data ' + data)
     })
-    this.log('Subscribed to event "' + args.event + '"')
+    vorpal.activeCommand.log('Subscribed to event "' + args.event + '"')
     return callback()
   })
 
 vorpal
   .command('unsubscribe <event>', 'Stop listening to a specific spacebro event.')
-  .action(function (args, callback) {
+  .action((args, callback) => {
     spacebroClient.off(args.event)
-    this.log('Unsubscribed to event "' + args.event + '"')
+    vorpal.activeCommand.log('Unsubscribed to event "' + args.event + '"')
     return callback()
   })
 
@@ -48,13 +48,13 @@ vorpal
   .command('emit <event> [data]', 'Emits a spacebro event with optionnal data. JSON must be surrounded by quotes.')
   .option('--interval <seconds>', 'The event will be emitted at specified interval (in seconds).')
   .option('--stop', 'Stops the interval for a given spacebro event.')
-  .action(function ({ event, data, options }, callback) {
+  .action(({ event, data, options }, callback) => {
     if (options.stop) {
       clearInterval(intervals[event])
-      this.log(`Cleared interval for event ${event}`)
+      vorpal.activeCommand.log(`Cleared interval for event ${event}`)
     } else if (options.interval) {
       if (isNaN(options.interval)) {
-        this.log('Error: the interval must be a positive integer')
+        vorpal.activeCommand.log('Error: the interval must be a positive integer')
         return callback()
       }
       let interval = setInterval(() => {
@@ -63,7 +63,7 @@ vorpal
       intervals[event] = interval
     } else {
       spacebroClient.emit(event, data)
-      this.log(`Emitted event '${event}' with data ${data}`)
+      vorpal.activeCommand.log(`Emitted event '${event}' with data ${data}`)
     }
     return callback()
   })
