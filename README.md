@@ -6,6 +6,7 @@ Command Line Interface for spacebro-client
 1. `git clone https://github.com/soixantecircuits/spacebro-client-cli.git`
 2. `cd spacebro-client-cli`
 3. `npm install -g`
+4. `cd node_modules/mdns && node-gyp BUILDTYPE=Release rebuild`
 
 ### Usage
 
