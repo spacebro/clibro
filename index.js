@@ -1,8 +1,15 @@
 #!/usr/bin/env node
+'use strict'
 
 const vorpal = require('vorpal')()
 const spacebroClient = require('spacebro-client')
-const config = require('./config')
+const fs = require('fs')
+
+let config = require('./user-configs/default.json')
+
+if (fs.existsSync('./config.json')) {
+  config = require('./config.json')
+}
 
 var intervals = []
 
