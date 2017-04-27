@@ -4,11 +4,14 @@
 const vorpal = require('vorpal')()
 const spacebroClient = require('spacebro-client')
 const fs = require('fs')
+const path = require('path')
 
 let config = require('./user-configs/default.json')
 
-if (fs.existsSync('./config.json')) {
-  config = require('./config.json')
+const configFileName = process.argv[2]
+const configFullPath = configFileName ? path.resolve(__dirname, configFileName) : null
+if (fs.existsSync(configFullPath)) {
+  config = require(configFullPath)
 }
 
 const intervals = []

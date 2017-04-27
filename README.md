@@ -20,3 +20,11 @@ Try to run the `help` command to see what can be done:
 ```
 SC-CLI$ help
 ```
+
+#### Configuration
+
+You can pass a custom config file as second argument like this:
+
+```bash
+$ spacebro-client-cli my-config.json
+```
