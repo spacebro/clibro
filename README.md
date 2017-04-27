@@ -1,25 +1,22 @@
-# spacebro-client-cli
-Command Line Interface for spacebro-client
+# spacebro-client-CLI
+
+Command Line Interface for spacebro-client.
 
 ### Installation
 
-1. `git clone https://github.com/soixantecircuits/spacebro-client-cli.git`
-2. `cd spacebro-client-cli`
-3. `npm install -g`
-4. `cd node_modules/mdns && node-gyp BUILDTYPE=Release rebuild`
+```bash
+$ yarn global add spacebro-client-cli
+```
 
 ### Usage
 
-Once installed, run `spacebro-client-cli`
+```bash
+$ spacebro-client-cli
 ```
-spacebro-client-cli$ help
 
-  Commands:
+You will enter the spacebro-client-CLI [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop).
 
-    help [command...]              Provides help for a given command.
-    exit                           Exits application.
-    subscribe <event>              Start listening to a specific spacebro event.
-    unsubscribe <event>            Stop listening to a specific spacebro event.
-    emit [options] <event> [data]  Emits a spacebro event with optionnal JSON parsed data.
-
+Try to run the `help` command to see what can be done:
+```
+spacebro-client-CLI $ help
 ```
