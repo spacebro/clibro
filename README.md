@@ -18,5 +18,5 @@ You will enter the spacebro-client-CLI [REPL](https://en.wikipedia.org/wiki/Read
 
 Try to run the `help` command to see what can be done:
 ```
-spacebro-client-CLI $ help
+SC-CLI$ help
 ```
