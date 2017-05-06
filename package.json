@@ -34,7 +34,7 @@
   "homepage": "https://github.com/soixantecircuits/spacebro-client-cli#readme",
   "dependencies": {
     "spacebro-client": "0.3.0",
-    "standard-settings": "^1.1.0",
+    "standard-settings": "^1.1.2",
     "vorpal": "^1.11.4"
   }
 }

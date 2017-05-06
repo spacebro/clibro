@@ -438,9 +438,9 @@ spacebro-client@0.3.0:
     socket.io-client "1.4.5"
     socketio-wildcard "^0.3.0"
 
-standard-settings@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/standard-settings/-/standard-settings-1.1.0.tgz#1d7a7c6d24591150f6828085af20006bbe3d4ff1"
+standard-settings@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/standard-settings/-/standard-settings-1.1.2.tgz#2e7d1f221cacbff7634573eb28578be424145fbe"
   dependencies:
     fs "^0.0.1-security"
     nconf "^0.8.4"
