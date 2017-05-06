@@ -19,7 +19,7 @@
     "cli"
   ],
   "author": "Soixante circuits",
-  "contributors":[
+  "contributors": [
     "4quet",
     "hugohil (http://hugohil.tech/)",
     "gabrielstuff (http://soixantecircuits.fr)"
@@ -30,7 +30,8 @@
   },
   "homepage": "https://github.com/soixantecircuits/spacebro-client-cli#readme",
   "dependencies": {
-    "spacebro-client": "^0.3.0",
+    "spacebro-client": "0.3.0",
+    "standard-settings": "^1.1.0",
     "vorpal": "^1.11.4"
   }
 }

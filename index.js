@@ -3,24 +3,11 @@
 
 const vorpal = require('vorpal')()
 const spacebroClient = require('spacebro-client')
-const fs = require('fs')
-const path = require('path')
-
-let config = require('./user-configs/default.json')
-
-const configFileName = process.argv[2]
-const configFullPath = typeof configFileName === 'string'
-  ? path.isAbsolute(configFileName)
-    ? configFileName
-    : path.resolve(process.cwd(), configFileName)
-  : null
-if (fs.existsSync(configFullPath)) {
-  config = require(configFullPath)
-}
-
+const standardSettings = require('standard-settings')
+const config = require('nconf').get()
 const intervals = []
 
-spacebroClient.connect(config.spacebro.address, config.spacebro.port,
+spacebroClient.connect(config.server.spacebro.address, config.server.spacebro.port,
   {
     clientName: config.clientName,
     channelName: config.channelName,
@@ -37,7 +24,7 @@ vorpal
       } catch (e) {
         console.warn(e)
       }
-      vorpal.activeCommand.log('Received event "' + args.event + '" with data ' + data)
+      vorpal.log('Received event "' + args.event + '" with data ' + data)
     })
     vorpal.activeCommand.log('Subscribed to event "' + args.event + '"')
     return callback()
@@ -47,7 +34,7 @@ vorpal
   .command('unsubscribe <event>', 'Stop listening to a specific spacebro event.')
   .action((args, callback) => {
     spacebroClient.off(args.event)
-    vorpal.activeCommand.log('Unsubscribed to event "' + args.event + '"')
+    vorpal.log('Unsubscribed to event "' + args.event + '"')
     return callback()
   })
 
