@@ -15,6 +15,10 @@ spacebroClient.connect(config.server.spacebro.address, config.server.spacebro.po
   }
 )
 
+spacebroClient.on('new-member', (data) => {
+  vorpal.log(`New member connected: ${data.member}`)
+})
+
 vorpal
   .command('subscribe <event>', 'Start listening to a specific spacebro event.')
   .action((args, callback) => {
