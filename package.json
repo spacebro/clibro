@@ -28,7 +28,9 @@
   "bugs": {
     "url": "https://github.com/soixantecircuits/spacebro-client-cli/issues"
   },
-  "engines" : { "node" : ">=v6.3.0" },
+  "engines": {
+    "node": ">=v6.3.0"
+  },
   "homepage": "https://github.com/soixantecircuits/spacebro-client-cli#readme",
   "dependencies": {
     "spacebro-client": "0.3.0",
