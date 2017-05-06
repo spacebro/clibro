@@ -19,6 +19,11 @@
     "cli"
   ],
   "author": "Soixante circuits",
+  "contributors":[
+    "4quet",
+    "hugohil (http://hugohil.tech/)",
+    "gabrielstuff (http://soixantecircuits.fr)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/soixantecircuits/spacebro-client-cli/issues"
