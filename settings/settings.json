@@ -4,7 +4,7 @@
   "server":{
     "spacebro": {
       "address": "spacebro.space",
-      "port": 8888
+      "port": 3333
     }
   }
 }
