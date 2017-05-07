@@ -33,8 +33,8 @@
   },
   "homepage": "https://github.com/soixantecircuits/spacebro-client-cli#readme",
   "dependencies": {
-    "spacebro-client": "0.3.0",
-    "standard-settings": "^1.1.2",
-    "vorpal": "^1.11.4"
+    "spacebro-client": "0.3.2",
+    "standard-settings": "1.1.6",
+    "vorpal": "^1.12.0"
   }
 }
