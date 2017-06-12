@@ -3,17 +3,14 @@
 
 const vorpal = require('vorpal')()
 const spacebroClient = require('spacebro-client')
-const standardSettings = require('standard-settings')
-const config = require('nconf').get()
+const config = require('standard-settings').getSettings().service.spacebro
 const intervals = []
 
-spacebroClient.connect(config.server.spacebro.address, config.server.spacebro.port,
-  {
-    clientName: config.clientName,
-    channelName: config.channelName,
-    verbose: false
-  }
-)
+spacebroClient.connect(config.address, config.port, {
+  clientName: config.client,
+  channelName: config.channel,
+  verbose: false
+})
 
 spacebroClient.on('new-member', (data) => {
   vorpal.log(`New member connected: ${data.member}`)

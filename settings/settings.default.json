@@ -1,10 +1,10 @@
 {
-  "clientName": "spacebro-client-CLI",
-  "channelName": "galaxy",
-  "server":{
+  "server": {
     "spacebro": {
       "address": "localhost",
-      "port": 8888
+      "port": 8888,
+      "client" : "spacebro-client-CLI",
+      "channel": "galaxy"
     }
   }
 }
