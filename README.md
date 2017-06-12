@@ -26,11 +26,13 @@ The JSON settings looks like:
 
 ```JSON
 {
-  "clientName": "spacebro-client-CLI",
-  "channelName": "my-channel",
-  "spacebro": {
-    "address": "spacebro.space",
-    "port": 3333
+  "service": {
+    "spacebro": {
+      "address": "spacebro.space",
+      "port": 3344,
+      "channel": "media-stream",
+      "client" : "spacebro-cli"
+    }
   }
 }
 ```
@@ -79,7 +81,7 @@ spacebro-client$ subscribe hello
 ```           
 
 #### Unsubscribe event
-To remove the subscription, use `unsubscribe`. Type: 
+To remove the subscription, use `unsubscribe`. Type:
 
 ```
 spacebro-client$ unsubscribe hello
