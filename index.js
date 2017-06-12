@@ -12,6 +12,23 @@ spacebroClient.connect(config.address, config.port, {
   verbose: false
 })
 
+spacebroClient.on('connect', () => {
+  vorpal.log(`${config.client} connected to '${config.address}:${config.port}#${config.channel}'`)
+})
+
+spacebroClient.on('connect_error', (err) => {
+  vorpal.log(`Error trying to connect ${config.client} to '${config.address}:${config.port}#${config.channel}':`, err)
+  process.exit(1)
+})
+spacebroClient.on('connect_timeout', () => {
+  vorpal.log(`Timed out trying to connect ${config.client} to '${config.address}:${config.port}#${config.channel}'`)
+  process.exit(1)
+})
+spacebroClient.on('error', (err) => {
+  vorpal.log('Error:', err)
+  process.exit(1)
+})
+
 spacebroClient.on('new-member', (data) => {
   vorpal.log(`New member connected: ${data.member}`)
 })
