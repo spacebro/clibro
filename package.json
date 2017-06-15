@@ -8,7 +8,10 @@
   },
   "scripts": {
     "start": "node index.js",
-    "lint": "eslint --ext .js index.js"
+    "lint": "eslint --ext .js tests index.js",
+    "test": "ava tests/*.js --verbose --timeout=2s",
+    "test:watch": "ava tests/*.js --verbose --watch --timeout=2s",
+    "ava": "ava --verbose --timeout=2s"
   },
   "repository": {
     "type": "git",
@@ -39,14 +42,17 @@
     "vorpal": "^1.12.0"
   },
   "devDependencies": {
+    "ava": "^0.19.1",
+    "babel-eslint": "^7.2.3",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^5.1.0",
     "eslint-friendly-formatter": "^2.0.5",
     "eslint-loader": "^1.3.0",
     "eslint-plugin-html": "^1.3.0",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^1.0.8",
     "eslint-plugin-standard": "^1.3.2",
-    "eslint-plugin-import": "^2.3.0",
-    "eslint-plugin-node": "^5.0.0"
+    "sleep-promise": "^2.0.0"
   }
 }

@@ -4,7 +4,8 @@
 const vorpal = require('vorpal')()
 const spacebroClient = require('spacebro-client')
 const config = require('standard-settings').getSettings().service.spacebro
-const intervals = []
+
+const { subscribe, unsubscribe, emit } = require('./commands')
 
 spacebroClient.connect(config.address, config.port, {
   clientName: config.client,
@@ -12,16 +13,18 @@ spacebroClient.connect(config.address, config.port, {
   verbose: false
 })
 
+const serverStr = `${config.address}:${config.port}#${config.channel}`
+
 spacebroClient.on('connect', () => {
-  vorpal.log(`${config.client} connected to '${config.address}:${config.port}#${config.channel}'`)
+  vorpal.log(`${config.client} connected to '${serverStr}'`)
 })
 
 spacebroClient.on('connect_error', (err) => {
-  vorpal.log(`Error trying to connect ${config.client} to '${config.address}:${config.port}#${config.channel}':`, err)
+  vorpal.log(`Error trying to connect ${config.client} to '${serverStr}':`, err)
   process.exit(1)
 })
 spacebroClient.on('connect_timeout', () => {
-  vorpal.log(`Timed out trying to connect ${config.client} to '${config.address}:${config.port}#${config.channel}'`)
+  vorpal.log(`Timed out trying to connect ${config.client} to '${serverStr}'`)
   process.exit(1)
 })
 spacebroClient.on('error', (err) => {
@@ -35,50 +38,17 @@ spacebroClient.on('new-member', (data) => {
 
 vorpal
   .command('subscribe <event>', 'Start listening to a specific spacebro event.')
-  .action((args, callback) => {
-    spacebroClient.on(args.event, (data) => {
-      try {
-        data = JSON.stringify(data)
-      } catch (e) {
-        console.warn(e)
-      }
-      vorpal.log('Received event "' + args.event + '" with data ' + data)
-    })
-    vorpal.activeCommand.log('Subscribed to event "' + args.event + '"')
-    return callback()
-  })
+  .action(subscribe)
 
 vorpal
   .command('unsubscribe <event>', 'Stop listening to a specific spacebro event.')
-  .action((args, callback) => {
-    spacebroClient.off(args.event)
-    vorpal.log('Unsubscribed to event "' + args.event + '"')
-    return callback()
-  })
+  .action(unsubscribe)
 
 vorpal
-  .command('emit <event> [data]', 'Emits a spacebro event with optionnal data. JSON must be surrounded by quotes.')
+  .command('emit <event> [data]', 'Emits a spacebro event with optional data. JSON must be surrounded by quotes.')
   .option('--interval <seconds>', 'The event will be emitted at specified interval (in seconds).')
   .option('--stop', 'Stops the interval for a given spacebro event.')
-  .action(({ event, data, options }, callback) => {
-    if (options.stop) {
-      clearInterval(intervals[event])
-      vorpal.activeCommand.log(`Cleared interval for event ${event}`)
-    } else if (options.interval) {
-      if (isNaN(options.interval)) {
-        vorpal.activeCommand.log('Error: the interval must be a positive integer')
-        return callback()
-      }
-      let interval = setInterval(() => {
-        spacebroClient.emit(event, data)
-      }, options.interval * 1000)
-      intervals[event] = interval
-    } else {
-      spacebroClient.emit(event, data)
-      vorpal.activeCommand.log(`Emitted event '${event}' with data ${data}`)
-    }
-    return callback()
-  })
+  .action(emit)
 
 vorpal
   .delimiter('spacebro-client$')
