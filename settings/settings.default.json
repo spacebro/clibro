@@ -4,7 +4,7 @@
       "address": "localhost",
       "port": 8888,
       "channel": "galaxy",
-      "client" : "spacebro-client-CLI"
+      "client": "clibro"
     }
   }
 }
