@@ -2,39 +2,22 @@
 'use strict'
 
 const vorpal = require('vorpal')()
-const spacebroClient = require('spacebro-client')
 const config = require('standard-settings').getSettings().service.spacebro
 
 const { subscribe, unsubscribe, emit } = require('./commands')
+const spacebro = require('./initSpacebro')
 
-spacebroClient.connect(config.address, config.port, {
-  clientName: config.client,
-  channelName: config.channel,
-  verbose: false
-})
+vorpal.warn = console.warn
+vorpal.error = console.error
 
-const serverStr = `${config.address}:${config.port}#${config.channel}`
-
-spacebroClient.on('connect', () => {
-  vorpal.log(`${config.client} connected to '${serverStr}'`)
-})
-
-spacebroClient.on('connect_error', (err) => {
-  vorpal.log(`Error trying to connect ${config.client} to '${serverStr}':`, err)
-  process.exit(1)
-})
-spacebroClient.on('connect_timeout', () => {
-  vorpal.log(`Timed out trying to connect ${config.client} to '${serverStr}'`)
-  process.exit(1)
-})
-spacebroClient.on('error', (err) => {
-  vorpal.log('Error:', err)
-  process.exit(1)
-})
-
-spacebroClient.on('new-member', (data) => {
-  vorpal.log(`New member connected: ${data.member}`)
-})
+spacebro.init(config, vorpal)
+  .then(() => {
+    vorpal.show()
+  })
+  .catch((err) => {
+    console.error(err)
+    process.exit(1)
+  })
 
 vorpal
   .command('subscribe <event>', 'Start listening to a specific spacebro event.')
@@ -52,4 +35,3 @@ vorpal
 
 vorpal
   .delimiter('spacebro-client$')
-  .show()

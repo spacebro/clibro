@@ -1,5 +1,4 @@
-
-const spacebroClient = require('spacebro-client')
+const spacebroClient = require('./initSpacebro').client
 
 function subscribe ({ event }, callback) {
   spacebroClient.on(event, (data) => {
