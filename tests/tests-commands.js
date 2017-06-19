@@ -204,6 +204,7 @@ test.failing.serial('emit - Invalid data', async t => {
     t.fail('No callback should be called')
     spacebro.client.off('emitEvent', cb)
   }
+  spacebro.client.on('emitEvent', cb)
   test_emit({ event: 'emitEvent', data: 'parse}THIS', options: {} })
 
   t.deepEqual(
