@@ -179,7 +179,7 @@ test.failing.serial.cb('emit - No data', t => {
 
 test.failing.serial.cb('emit - Valid data', t => {
   const { logger, test_emit } = t.context
-  t.plan(4)
+  t.plan(5)
 
   function cb (data) {
     t.deepEqual(data, {_to: null, _from: 'clibro', str: 'abcd'})
@@ -187,7 +187,10 @@ test.failing.serial.cb('emit - Valid data', t => {
     t.end()
   }
   spacebro.client.on('emitEvent', cb)
-  test_emit({ event: 'emitEvent', data: '{"str": "abcd"}', options: {} })
+  test_emit(
+    { event: 'emitEvent', data: '{"str": "abcd"}', options: {} },
+    () => { t.pass() }
+  )
 
   t.deepEqual(
     logger.logs, [['Emitted event "emitEvent" with data {"str": "abcd"}']]
@@ -198,14 +201,17 @@ test.failing.serial.cb('emit - Valid data', t => {
 
 test.failing.serial('emit - Invalid data', async t => {
   const { logger, test_emit } = t.context
-  t.plan(3)
+  t.plan(4)
 
   function cb (data) {
     t.fail('No callback should be called')
     spacebro.client.off('emitEvent', cb)
   }
   spacebro.client.on('emitEvent', cb)
-  test_emit({ event: 'emitEvent', data: 'parse}THIS', options: {} })
+  test_emit(
+    { event: 'emitEvent', data: 'parse}THIS', options: {} },
+    () => { t.pass() }
+  )
 
   t.deepEqual(
     logger.errors,
@@ -215,5 +221,104 @@ test.failing.serial('emit - Invalid data', async t => {
   t.deepEqual(logger.warnings, [], 'No warnings logged')
 })
 
-test.todo('$ emit --interval')
-test.todo('$ emit --stop') // Normal - called twice
+test.failing.serial('emit - With --interval', async t => {
+  const { logger, test_emit } = t.context
+  const intervalCount = 3
+  t.plan(intervalCount + 5)
+
+  function cb (data) {
+    t.deepEqual(data, {_to: null, _from: 'clibro', str: 'abcd'})
+  }
+  spacebro.client.on('emitEvent', cb)
+
+  test_emit(
+    {
+      event: 'emitEvent',
+      data: '{"str": "abcd"}',
+      options: {interval: 0.5} // 500ms
+    },
+    () => { t.pass() }
+  )
+  t.deepEqual(
+    logger.logs,
+    [['Emitting event "emitEvent" every 0.5s with data {"str": "abcd"}']]
+  )
+  await sleep(intervalCount * 500 + 200)
+  logger.logs = []
+
+  t.deepEqual(logger.logs, [], 'No messages logged')
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+  t.deepEqual(logger.errors, [], 'No errors logged')
+
+  spacebro.client.off('emitEvent', cb)
+  test_emit({ event: 'emitEvent', options: {stop: true} }, () => { t.pass() })
+})
+
+test.failing.serial('emit - With --interval, wrong parameter', t => {
+  const { logger, test_emit } = t.context
+  t.plan(6)
+
+  test_emit(
+    { event: 'emitEvent', options: {interval: 'abcd'} },
+    () => { t.pass() }
+  )
+  t.deepEqual(
+    logger.errors, [['Error: the interval must be a positive integer']]
+  )
+  logger.errors = []
+
+  test_emit(
+    { event: 'emitEvent', options: {interval: -10} },
+    () => { t.pass() }
+  )
+  t.deepEqual(
+    logger.errors, [['Error: the interval must be a positive integer']]
+  )
+
+  t.deepEqual(logger.logs, [], 'No messages logged')
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+})
+
+test.failing.serial('emit - With --stop', async t => {
+  const { logger, test_emit } = t.context
+  t.plan(5)
+
+  function cb () {
+    t.fail('No event should be sent')
+  }
+  spacebro.client.on('stopEvent', cb)
+  test_emit(
+    { event: 'stopEvent', options: {interval: 0.5} },
+    () => { t.pass() }
+  )
+  test_emit(
+    { event: 'stopEvent', options: {stop: true} },
+    () => { t.pass() }
+  )
+
+  await sleep(200)
+
+  t.deepEqual(logger.logs, [
+    ['Emitting event "stopEvent" every 0.5s with data {"str": "abcd"}'],
+    ['Cleared interval for event "stopEvent"']
+  ])
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+  t.deepEqual(logger.errors, [], 'No errors logged')
+
+  spacebro.client.off('stopEvent', cb)
+})
+
+test.failing.serial('emit - With --stop without --interval', async t => {
+  const { logger, test_emit } = t.context
+  t.plan(4)
+
+  test_emit(
+    { event: 'stopEvent', options: {stop: true} },
+    () => { t.pass() }
+  )
+  t.deepEqual(
+    logger.errors, [['Error: interval "stopEvent" does not exist']]
+  )
+  t.deepEqual(logger.logs, [], 'No messages logged')
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+})

@@ -1,5 +1,7 @@
 const spacebroClient = require('./initSpacebro').client
 
+const intervals = {}
+
 function subscribe ({ event }, callback) {
   spacebroClient.on(event, (data) => {
     try {
@@ -22,10 +24,10 @@ function unsubscribe ({ event }, callback) {
 function emit ({ event, data, options }, callback) {
   if (options.stop) {
     clearInterval(intervals[event])
-    this.log(`Cleared interval for event ${event}`)
+    this.log(`Cleared interval for event "${event}"`)
   } else if (options.interval) {
     if (isNaN(options.interval)) {
-      this.log('Error: the interval must be a positive integer')
+      this.error('Error: the interval must be a positive integer')
       return callback()
     }
     let interval = setInterval(() => {
