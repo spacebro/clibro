@@ -45,3 +45,26 @@ test.serial('Simple connection', async t => {
   t.deepEqual(logger.errors, [])
   t.deepEqual(logger.warnings, [])
 })
+
+test.serial('Connection wrong port', async t => {
+  const { logger } = t.context
+  const config = {
+    address: 'spacebro.space',
+    port: 1234,
+    channel: 'clibro-test-is',
+    client: 'clibro'
+  }
+  const serverStr = 'spacebro.space:1234#clibro-test-is'
+
+  // TODO - Have clearer error messages
+  // https://github.com/spacebro/clibro/issues/10
+  const error = await t.throws(init(config, logger))
+  const expectedMessage = `Error trying to connect clibro to '${serverStr}':\n`
+  t.is(error.slice(0, expectedMessage.length), expectedMessage)
+
+  t.deepEqual(
+    logger.logs, [[`Connecting to spacebro server '${serverStr}'...`]]
+  )
+  t.deepEqual(logger.errors, [])
+  t.deepEqual(logger.warnings, [])
+})
