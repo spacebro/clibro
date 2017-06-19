@@ -15,7 +15,7 @@ function subscribe ({ event }, callback) {
 
 function unsubscribe ({ event }, callback) {
   spacebroClient.off(event)
-  this.log(`Unsubscribed to event "${event}"`)
+  this.log(`Unsubscribed from event "${event}"`)
   return callback()
 }
 
