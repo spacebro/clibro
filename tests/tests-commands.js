@@ -33,6 +33,7 @@ test.beforeEach(t => {
   }
   t.context.test_subscribe = subscribe.bind(t.context.logger)
   t.context.test_unsubscribe = unsubscribe.bind(t.context.logger)
+  t.context.test_emit = emit.bind(t.context.logger)
 })
 
 test.afterEach(t => {
@@ -159,6 +160,59 @@ test.failing('unsubscribe - Reserved event', async t => {
   t.deepEqual(logger.warnings, [], 'No warnings logged')
 })
 
-test.todo('$ emit') // No data - Valid data - Invalid data
+test.failing.serial.cb('emit - No data', t => {
+  const { logger, test_emit } = t.context
+  t.plan(4)
+
+  function cb (data) {
+    t.deepEqual(data, {_to: null, _from: 'clibro'})
+    spacebro.client.off('emitEvent', cb)
+    t.end()
+  }
+  spacebro.client.on('emitEvent', cb)
+  test_emit({ event: 'emitEvent', options: {} })
+
+  t.deepEqual(logger.logs, [['Emitted event "emitEvent" with no data']])
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+  t.deepEqual(logger.errors, [], 'No errors logged')
+})
+
+test.failing.serial.cb('emit - Valid data', t => {
+  const { logger, test_emit } = t.context
+  t.plan(4)
+
+  function cb (data) {
+    t.deepEqual(data, {_to: null, _from: 'clibro', str: 'abcd'})
+    spacebro.client.off('emitEvent', cb)
+    t.end()
+  }
+  spacebro.client.on('emitEvent', cb)
+  test_emit({ event: 'emitEvent', data: '{"str": "abcd"}', options: {} })
+
+  t.deepEqual(
+    logger.logs, [['Emitted event "emitEvent" with data {"str": "abcd"}']]
+  )
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+  t.deepEqual(logger.errors, [], 'No errors logged')
+})
+
+test.failing.serial('emit - Invalid data', async t => {
+  const { logger, test_emit } = t.context
+  t.plan(3)
+
+  function cb (data) {
+    t.fail('No callback should be called')
+    spacebro.client.off('emitEvent', cb)
+  }
+  test_emit({ event: 'emitEvent', data: 'parse}THIS', options: {} })
+
+  t.deepEqual(
+    logger.errors,
+    [['Parsing error: cannot read given data']]
+  )
+  t.deepEqual(logger.logs, [], 'No messages logged')
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+})
+
 test.todo('$ emit --interval')
 test.todo('$ emit --stop') // Normal - called twice

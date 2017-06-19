@@ -34,7 +34,7 @@ function emit ({ event, data, options }, callback) {
     intervals[event] = interval
   } else {
     spacebroClient.emit(event, data)
-    this.log(`Emitted event '${event}' with data ${data}`)
+    this.log(`Emitted event "${event}" with data ${data}`)
   }
   return callback()
 }
