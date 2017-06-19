@@ -7,15 +7,15 @@ function subscribe ({ event }, callback) {
     } catch (e) {
       this.warn(e)
     }
-    this.log('Received event "' + event + '" with data ' + data)
+    this.log(`Received event "${event}" with data ${data}`)
   })
-  this.log('Subscribed to event "' + event + '"')
+  this.log(`Subscribed to event "${event}"`)
   return callback()
 }
 
 function unsubscribe ({ event }, callback) {
   spacebroClient.off(event)
-  this.log('Unsubscribed to event "' + event + '"')
+  this.log(`Unsubscribed to event "${event}"`)
   return callback()
 }
 
