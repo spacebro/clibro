@@ -10,9 +10,9 @@
     "start": "node index.js",
     "test": "npm run lint && npm run unittest",
     "lint": "eslint --ext .js tests index.js",
-    "unittest": "ava tests/*.js --verbose --timeout=2s",
-    "unittest:watch": "ava tests/*.js --verbose --watch --timeout=2s",
-    "ava": "ava --verbose --timeout=2s"
+    "unittest": "ava tests/*.js --verbose --timeout=4s",
+    "unittest:watch": "ava tests/*.js --verbose --watch --timeout=4s",
+    "ava": "ava --verbose --timeout=4s"
   },
   "repository": {
     "type": "git",
