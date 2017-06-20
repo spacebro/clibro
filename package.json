@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "npm run lint && npm run unittest",
-    "lint": "eslint --ext .js tests index.js",
+    "lint": "eslint --ext .js tests src index.js",
     "unittest": "ava tests/*.js --verbose --timeout=4s",
     "unittest:watch": "ava tests/*.js --verbose --watch --timeout=4s",
     "ava": "ava --verbose --timeout=4s"

@@ -4,8 +4,8 @@ import sleep from 'sleep-promise'
 import { getSettings } from 'standard-settings'
 const config = getSettings().service.spacebro
 
-import { subscribe, unsubscribe, emit } from '../commands'
-import spacebro from '../initSpacebro'
+import { subscribe, unsubscribe, emit } from '../src/commands'
+import spacebro from '../src/initSpacebro'
 
 test.before(async t => {
   const consoleSansLog = {

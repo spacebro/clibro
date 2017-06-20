@@ -4,8 +4,8 @@
 const vorpal = require('vorpal')()
 const config = require('standard-settings').getSettings().service.spacebro
 
-const { subscribe, unsubscribe, emit } = require('./commands')
-const spacebro = require('./initSpacebro')
+const { subscribe, unsubscribe, emit } = require('./src/commands')
+const spacebro = require('./src/initSpacebro')
 
 vorpal.warn = console.warn
 vorpal.error = console.error

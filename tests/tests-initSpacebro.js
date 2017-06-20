@@ -1,8 +1,8 @@
 import test from 'ava'
 import sleep from 'sleep-promise'
 
-// import { client, init } from '../initSpacebro'
-import { init } from '../initSpacebro'
+// import { client, init } from '../src/initSpacebro'
+import { init } from '../src/initSpacebro'
 
 test.beforeEach(t => {
   t.context.logger = {

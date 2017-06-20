@@ -1,6 +1,6 @@
 const client = require('spacebro-client')
 
-function init(config, display) {
+function init (config, display) {
   return new Promise((resolve, reject) => {
     const clientStr = `${config.client}`
     const serverStr = `${config.address}:${config.port}#${config.channel}`
