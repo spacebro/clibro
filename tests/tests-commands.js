@@ -7,12 +7,19 @@ const config = getSettings().service.spacebro
 import { subscribe, unsubscribe, emit } from '../src/commands'
 import spacebro from '../src/initSpacebro'
 
+const consoleSansLog = {
+  log: () => {},
+  warn: console.warn,
+  error: console.error
+}
+
+const dummyConsole = {
+  log: () => {},
+  warn: () => {},
+  error: () => {}
+}
+
 test.before(async t => {
-  const consoleSansLog = {
-    log: () => {},
-    error: console.error,
-    warn: console.warn
-  }
   await spacebro.init(config, consoleSansLog)
 })
 
@@ -34,10 +41,8 @@ test.beforeEach(t => {
   t.context.test_subscribe = subscribe.bind(t.context.logger)
   t.context.test_unsubscribe = unsubscribe.bind(t.context.logger)
   t.context.test_emit = emit.bind(t.context.logger)
-})
 
-test.afterEach(t => {
-  t.context.test_unsubscribe({ event: 'foobar' }, () => {})
+  unsubscribe.bind(dummyConsole)({ event: 'foobar' }, () => {})
 })
 
 test('Has commands', t => {
@@ -100,6 +105,18 @@ test.serial('subscribe - Twice', async t => {
   t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
+test('subscribe - Reserved event', async t => {
+  const { logger, test_subscribe } = t.context
+  t.plan(4)
+
+  test_subscribe({ event: 'new-member' }, () => { t.pass() })
+  t.deepEqual(
+    logger.errors, [['Cannot subscribe to reserved event "new-member"']]
+  )
+  t.deepEqual(logger.logs, [], 'No messages logged')
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+})
+
 test.serial('unsubscribe - Once', async t => {
   const { logger, test_subscribe, test_unsubscribe } = t.context
   t.plan(6)
@@ -151,7 +168,6 @@ test.serial('unsubscribe - Subscribe again', async t => {
   t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
-test.todo('subscribe - Reserved event')
 test.todo('subscribe - *')
 test.todo('unsubscribe - *')
 
@@ -184,7 +200,7 @@ test.serial.cb('emit - No data', t => {
   t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
-test.failing.serial.cb('emit - Valid data', t => {
+test.serial.cb('emit - Valid data', t => {
   const { logger, test_emit } = t.context
   t.plan(5)
 
@@ -206,7 +222,7 @@ test.failing.serial.cb('emit - Valid data', t => {
   t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
-test.failing.serial('emit - Invalid data', async t => {
+test.serial('emit - Invalid data', async t => {
   const { logger, test_emit } = t.context
   t.plan(4)
 
@@ -222,7 +238,7 @@ test.failing.serial('emit - Invalid data', async t => {
 
   t.deepEqual(
     logger.errors,
-    [['Parsing error: cannot read given data']]
+    [['Parsing Error: data is not valid json']]
   )
   t.deepEqual(logger.logs, [], 'No messages logged')
   t.deepEqual(logger.warnings, [], 'No warnings logged')
@@ -315,8 +331,35 @@ test.serial('emit - With --stop', async t => {
   spacebro.client.off('stopEvent', cb)
 })
 
-test.todo('emit - Use --interval twice')
-test.todo('emit - Use --interval and --stop at the same time')
+test.serial('emit - Use --interval twice', async t => {
+  const { logger, test_emit } = t.context
+
+  test_emit({event: 'emitEvent', options: {interval: 0.5}}, () => { t.pass() })
+  logger.logs = []
+
+  test_emit({event: 'emitEvent', options: {interval: 0.5}}, () => { t.pass() })
+
+  t.deepEqual(logger.errors, [['Error: "emitEvent" is already being emitted']])
+  t.deepEqual(logger.logs, [], 'No messages logged')
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+
+  test_emit({ event: 'emitEvent', options: {stop: true} }, () => { t.pass() })
+})
+
+test('emit - Use --interval and --stop at the same time', t => {
+  const { logger, test_emit } = t.context
+
+  test_emit(
+    { event: 'whatever', options: {interval: 0.5, stop: true} },
+    () => { t.pass() }
+  )
+
+  t.deepEqual(logger.errors, [[
+    'Error: Cannot use both --interval and --stop in the same command'
+  ]])
+  t.deepEqual(logger.logs, [], 'No messages logged')
+  t.deepEqual(logger.warnings, [], 'No warnings logged')
+})
 
 test.serial('emit - With --stop without --interval', async t => {
   const { logger, test_emit } = t.context
