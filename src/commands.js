@@ -10,13 +10,13 @@ function subscribe ({ event }, callback) {
         const dataObj = data
         const senderName = data._from
 
-        if (typeof dataObj == 'object') {
+        if (typeof dataObj === 'object') {
           delete dataObj._to
           delete dataObj._from
         }
         const dataStr = JSON.stringify(data)
 
-        if (typeof dataObj == 'object' && Object.keys(dataObj).length == 0) {
+        if (typeof dataObj === 'object' && Object.keys(dataObj).length === 0) {
           this.log(`Received event "${event}" from ${senderName} with no data`)
         } else {
           this.log(`Received event "${event}" from ${senderName} with data ${dataStr}`)
@@ -53,7 +53,7 @@ function unsubscribe ({ event }, callback) {
     spacebroClient.off(event)
     subscribedEvents[event] = false
     this.log(`Unsubscribed from event "${event}"`)
-  } else if (reservedEvents.indexOf(event) != -1) {
+  } else if (reservedEvents.indexOf(event) !== -1) {
     this.error(`Cannot unsubscribe from reserved event "${event}"`)
   } else {
     this.error(`Event "${event}" does not exist`)
@@ -62,7 +62,7 @@ function unsubscribe ({ event }, callback) {
 }
 
 function emit ({ event, data, options }, callback) {
-  const dataStr = (data != null ) ? `data ${data}` : 'no data'
+  const dataStr = (data != null) ? `data ${data}` : 'no data'
 
   if (options.interval) {
     if (options.interval > 0) {
