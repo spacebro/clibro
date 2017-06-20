@@ -46,7 +46,7 @@ test('Has commands', t => {
   t.is(typeof emit, 'function')
 })
 
-test('subscribe - Simple use', async t => {
+test.serial('subscribe - Simple use', async t => {
   const { logger, test_subscribe } = t.context
   t.plan(4)
 
@@ -57,7 +57,7 @@ test('subscribe - Simple use', async t => {
   t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
-test.failing('subscribe - Data sent', async t => {
+test.failing.serial('subscribe - Data sent', async t => {
   const { logger, test_subscribe } = t.context
   t.plan(7)
 
@@ -66,17 +66,20 @@ test.failing('subscribe - Data sent', async t => {
 
   spacebro.client.emit('foobar')
   await sleep(200) // 200 ms
-  t.deepEqual(logger.logs[0], ['Received event "foobar" with no data'])
+  t.deepEqual(
+    logger.logs[0], ['Received event "foobar" from clibro with no data']
+  )
 
   spacebro.client.emit('foobar', 10)
   await sleep(200) // 200 ms
-  t.deepEqual(logger.logs[1], ['Received event "foobar" with data 10'])
+  t.deepEqual(
+    logger.logs[1], ['Received event "foobar" from clibro with data 10']
+  )
 
   spacebro.client.emit('foobar', { abc: 'def' })
   await sleep(200) // 200 ms
   t.deepEqual(logger.logs[2], [
-    'Received event "foobar" with data ' +
-    '{"abc":"def","_to":null,"_from":"clibro"}'
+    'Received event "foobar" from clibro with data {"abc":"def"}'
   ])
 
   t.is(logger.logs.length, 3)
@@ -84,20 +87,20 @@ test.failing('subscribe - Data sent', async t => {
   t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
-test.failing('subscribe - Twice', async t => {
+test.serial('subscribe - Twice', async t => {
   const { logger, test_subscribe } = t.context
-  t.plan(10)
+  t.plan(5)
 
   test_subscribe({ event: 'foobar' }, () => { t.pass() })
   logger.logs = []
   test_subscribe({ event: 'foobar' }, () => { t.pass() })
 
-  t.deepEqual(logger.errors, [['"foobar" already subscribed']])
+  t.deepEqual(logger.warnings, [['"foobar" already subscribed']])
   t.deepEqual(logger.logs, [], 'No new messages logged')
-  t.deepEqual(logger.warnings, [], 'No warnings logged')
+  t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
-test('unsubscribe - Once', async t => {
+test.serial('unsubscribe - Once', async t => {
   const { logger, test_subscribe, test_unsubscribe } = t.context
   t.plan(6)
 
@@ -116,7 +119,7 @@ test('unsubscribe - Once', async t => {
   t.deepEqual(logger.logs, [], 'Event no longer intercepted')
 })
 
-test.failing('unsubscribe - Twice', async t => {
+test.serial('unsubscribe - Twice', async t => {
   const { logger, test_subscribe, test_unsubscribe } = t.context
   t.plan(7)
 
@@ -134,7 +137,7 @@ test.failing('unsubscribe - Twice', async t => {
   t.deepEqual(logger.warnings, [], 'No warnings logged')
 })
 
-test('unsubscribe - Subscribe again', async t => {
+test.serial('unsubscribe - Subscribe again', async t => {
   const { logger, test_subscribe, test_unsubscribe } = t.context
   t.plan(6)
 
@@ -148,21 +151,25 @@ test('unsubscribe - Subscribe again', async t => {
   t.deepEqual(logger.errors, [], 'No errors logged')
 })
 
-test.failing('unsubscribe - Reserved event', async t => {
+test.todo('subscribe - Reserved event')
+test.todo('subscribe - *')
+test.todo('unsubscribe - *')
+
+test('unsubscribe - Reserved event', async t => {
   const { logger, test_unsubscribe } = t.context
   t.plan(4)
 
   test_unsubscribe({ event: 'new-member' }, () => { t.pass() })
   t.deepEqual(
-    logger.errors, ['Cannot unsubscribe reserved event "new-member"']
+    logger.errors, [['Cannot unsubscribe from reserved event "new-member"']]
   )
   t.deepEqual(logger.logs, [], 'No messages logged')
   t.deepEqual(logger.warnings, [], 'No warnings logged')
 })
 
-test.failing.serial.cb('emit - No data', t => {
+test.serial.cb('emit - No data', t => {
   const { logger, test_emit } = t.context
-  t.plan(4)
+  t.plan(5)
 
   function cb (data) {
     t.deepEqual(data, {_to: null, _from: 'clibro'})
@@ -170,7 +177,7 @@ test.failing.serial.cb('emit - No data', t => {
     t.end()
   }
   spacebro.client.on('emitEvent', cb)
-  test_emit({ event: 'emitEvent', options: {} })
+  test_emit({ event: 'emitEvent', options: {} }, () => { t.pass() })
 
   t.deepEqual(logger.logs, [['Emitted event "emitEvent" with no data']])
   t.deepEqual(logger.warnings, [], 'No warnings logged')
@@ -243,7 +250,7 @@ test.failing.serial('emit - With --interval', async t => {
     logger.logs,
     [['Emitting event "emitEvent" every 0.5s with data {"str": "abcd"}']]
   )
-  await sleep(intervalCount * 500 + 200)
+  await sleep(intervalCount * 500 + 400)
   logger.logs = []
 
   t.deepEqual(logger.logs, [], 'No messages logged')
@@ -254,7 +261,7 @@ test.failing.serial('emit - With --interval', async t => {
   test_emit({ event: 'emitEvent', options: {stop: true} }, () => { t.pass() })
 })
 
-test.failing.serial('emit - With --interval, wrong parameter', t => {
+test.serial('emit - With --interval, wrong parameter', t => {
   const { logger, test_emit } = t.context
   t.plan(6)
 
@@ -279,7 +286,7 @@ test.failing.serial('emit - With --interval, wrong parameter', t => {
   t.deepEqual(logger.warnings, [], 'No warnings logged')
 })
 
-test.failing.serial('emit - With --stop', async t => {
+test.serial('emit - With --stop', async t => {
   const { logger, test_emit } = t.context
   t.plan(5)
 
@@ -299,7 +306,7 @@ test.failing.serial('emit - With --stop', async t => {
   await sleep(200)
 
   t.deepEqual(logger.logs, [
-    ['Emitting event "stopEvent" every 0.5s with data {"str": "abcd"}'],
+    ['Emitting event "stopEvent" every 0.5s with no data'],
     ['Cleared interval for event "stopEvent"']
   ])
   t.deepEqual(logger.warnings, [], 'No warnings logged')
@@ -308,7 +315,10 @@ test.failing.serial('emit - With --stop', async t => {
   spacebro.client.off('stopEvent', cb)
 })
 
-test.failing.serial('emit - With --stop without --interval', async t => {
+test.todo('emit - Use --interval twice')
+test.todo('emit - Use --interval and --stop at the same time')
+
+test.serial('emit - With --stop without --interval', async t => {
   const { logger, test_emit } = t.context
   t.plan(4)
 
