@@ -17,6 +17,17 @@ const reservedEvents = [
   'reconnect_failed'
 ]
 
+function resetAll () {
+  for (const event of Object.keys(subscribedEvents)) {
+    spacebroClient.off(event)
+    delete subscribedEvents[event]
+  }
+  for (const event of Object.keys(intervals)) {
+    clearInterval(intervals[event])
+    delete intervals[event]
+  }
+}
+
 function subscribe ({ event }, callback) {
   if (subscribedEvents[event]) {
     this.warn(`"${event}" already subscribed`)
@@ -120,5 +131,6 @@ function emit ({ event, data, options }, callback) {
 module.exports = {
   subscribe,
   unsubscribe,
-  emit
+  emit,
+  resetAll
 }

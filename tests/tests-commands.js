@@ -1,10 +1,7 @@
 import test from 'ava'
 import sleep from 'sleep-promise'
 
-import { getSettings } from 'standard-settings'
-const config = getSettings().service.spacebro
-
-import { subscribe, unsubscribe, emit } from '../src/commands'
+import { subscribe, unsubscribe, emit, resetAll } from '../src/commands'
 import spacebro from '../src/initSpacebro'
 
 const consoleSansLog = {
@@ -13,13 +10,13 @@ const consoleSansLog = {
   error: console.error
 }
 
-const dummyConsole = {
-  log: () => {},
-  warn: () => {},
-  error: () => {}
-}
-
 test.before(async t => {
+  const config = {
+    address: 'spacebro.space',
+    port: 3333,
+    channel: 'clibro-tests-commands',
+    client: 'clibro'
+  }
   await spacebro.init(config, consoleSansLog)
 })
 
@@ -42,7 +39,7 @@ test.beforeEach(t => {
   t.context.test_unsubscribe = unsubscribe.bind(t.context.logger)
   t.context.test_emit = emit.bind(t.context.logger)
 
-  unsubscribe.bind(dummyConsole)({ event: 'foobar' }, () => {})
+  resetAll()
 })
 
 test('Has commands', t => {

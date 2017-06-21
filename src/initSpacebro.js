@@ -5,7 +5,7 @@ function init (config, display) {
     const clientStr = `${config.client}`
     const serverStr = `${config.address}:${config.port}#${config.channel}`
 
-    display.log(`Connecting to spacebro server '${serverStr}'...`)
+    display.log(`Connecting to spacebro server "${serverStr}"...`)
 
     client.connect(config.address, config.port, {
       clientName: config.client,
@@ -14,10 +14,10 @@ function init (config, display) {
     })
 
     client.on('connect_error', (err) => {
-      reject(`Error trying to connect ${clientStr} to '${serverStr}':\n${err}`)
+      reject(`Error trying to connect ${clientStr} to "${serverStr}":\n${err}`)
     })
     client.on('connect_timeout', () => {
-      reject(`Timed out trying to connect ${clientStr} to '${serverStr}'`)
+      reject(`Timed out trying to connect ${clientStr} to "${serverStr}"`)
     })
     client.on('error', (err) => reject(err))
 
@@ -26,7 +26,7 @@ function init (config, display) {
     })
 
     client.on('connect', () => {
-      display.log(`${clientStr} connected to '${serverStr}'`)
+      display.log(`${clientStr} connected to "${serverStr}"`)
       resolve(client)
     })
   })
