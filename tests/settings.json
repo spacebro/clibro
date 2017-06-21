@@ -1,0 +1,10 @@
+{
+  "service": {
+    "spacebro": {
+      "address": "spacebro.space",
+      "port": 3333,
+      "channel": "clibro-test-ete",
+      "client": "test-clibro"
+    }
+  }
+}
