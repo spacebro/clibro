@@ -29,12 +29,15 @@ function resetAll () {
 }
 
 function subscribe ({ event }, callback) {
+  const warn = this.warn || this.log
+  const error = this.error || this.log
+
   if (subscribedEvents[event]) {
-    this.warn(`"${event}" already subscribed`)
+    warn(`"${event}" already subscribed`)
     return callback()
   }
   if (reservedEvents.indexOf(event) !== -1) {
-    this.error(`Cannot subscribe to reserved event "${event}"`)
+    error(`Cannot subscribe to reserved event "${event}"`)
     return callback()
   }
   spacebroClient.on(event, (data) => {
@@ -55,7 +58,7 @@ function subscribe ({ event }, callback) {
       }
       this.log(`Received event "${event}" from ${senderName} with ${dataStr}`)
     } catch (e) {
-      this.warn(e)
+      warn(e)
     }
   })
   subscribedEvents[event] = true
@@ -64,12 +67,14 @@ function subscribe ({ event }, callback) {
 }
 
 function unsubscribe ({ event }, callback) {
+  const error = this.error || this.log
+
   if (reservedEvents.indexOf(event) !== -1) {
-    this.error(`Cannot unsubscribe from reserved event "${event}"`)
+    error(`Cannot unsubscribe from reserved event "${event}"`)
     return callback()
   }
   if (!subscribedEvents[event]) {
-    this.error(`Event "${event}" does not exist`)
+    error(`Event "${event}" does not exist`)
     return callback()
   }
   spacebroClient.off(event)
@@ -79,6 +84,7 @@ function unsubscribe ({ event }, callback) {
 }
 
 function emit ({ event, data, options }, callback) {
+  const error = this.error || this.log
   const dataStr = (data != null) ? `data ${data}` : 'no data'
   let dataObj
 
@@ -86,21 +92,21 @@ function emit ({ event, data, options }, callback) {
     dataObj = (data != null) ? JSON.parse(data) : data
   }
   catch (e) {
-    this.error('Parsing Error: data is not valid json')
+    error('Parsing Error: data is not valid json')
     return callback()
   }
   if (options.interval && options.stop) {
-    this.error('Error: Cannot use both --interval and --stop in the same command')
+    error('Error: Cannot use both --interval and --stop in the same command')
     return callback()
   }
 
   if (options.interval) {
     if (!(options.interval > 0)) {
-      this.error('Error: the interval must be a positive integer')
+      error('Error: the interval must be a positive integer')
       return callback()
     }
     if (intervals[event]) {
-      this.error(`Error: "${event}" is already being emitted`)
+      error(`Error: "${event}" is already being emitted`)
       return callback()
     }
     intervals[event] = setInterval(
@@ -112,7 +118,7 @@ function emit ({ event, data, options }, callback) {
 
   else if (options.stop) {
     if (!intervals[event]) {
-      this.error(`Error: interval "${event}" does not exist`)
+      error(`Error: interval "${event}" does not exist`)
       return callback()
     }
     clearInterval(intervals[event])
