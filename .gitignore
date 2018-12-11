@@ -130,3 +130,5 @@ $RECYCLE.BIN/
 dev.config.json
 
 settings/settings.json
+settings/settings.*.json
+!settings/settings.default.json
