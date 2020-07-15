@@ -1,15 +1,16 @@
-const {SpacebroClient} = require('spacebro-client')
+const client = require('spacebro2-client')
 
 function init (config, display) {
   return new Promise((resolve, reject) => {
     const clientStr = `${config.client}`
     const serverStr = `${config.address}:${config.port}#${config.channel}`
-    
-    let client = new SpacebroClient({
+
+    client.setup({
       host: config.address,
       port: config.port,
-      client: {name: config.client},
-      channelName: config.channel
+      client: {
+        name: config.client
+      }
     })
 
     display.log(`Connecting to spacebro server "${serverStr}"...`)
@@ -23,10 +24,12 @@ function init (config, display) {
     client.on('error', (err) => reject(err))
 
     client.on('new-member', (data) => {
+      // not yet implemented
       display.log(`New member connected: ${data.member}`)
     })
 
-    client.on('connect', () => {
+    client.on('connected', () => {
+      // not yet implemented
       display.log(`${clientStr} connected to "${serverStr}"`)
       resolve(client)
     })

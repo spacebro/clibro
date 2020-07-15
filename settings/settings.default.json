@@ -1,9 +1,9 @@
 {
   "service": {
     "spacebro": {
-      "address": "localhost",
-      "port": 8888,
-      "channel": "galaxy",
+      "address": "spacebro.space",
+      "port": 3333,
+      "channel": "nouvelle-cave",
       "client": "clibro"
     }
   }

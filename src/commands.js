@@ -15,12 +15,12 @@ const reservedEvents = [
   'reconnect_failed'
 ]
 
-module.exports = (client, vorpal) => {
-  var module = {
-    subscribe: ({ event }, callback) => {
-      const warn = vorpal.warn || vorpal.log
-      const error = vorpal.error || vorpal.log
+module.exports = (client, cli) => {
+  const warn = cli.warn || cli.log
+  const error = cli.error || cli.log
 
+  var module = {
+    subscribe: ({ event }) => {
       if (subscribedEvents[event]) {
         warn(`"${event}" already subscribed`)
         return callback()
@@ -45,33 +45,28 @@ module.exports = (client, vorpal) => {
           } else {
             dataStr = JSON.stringify(data)
           }
-          vorpal.log(`Received event "${event}" from ${senderName} with ${dataStr}`)
+          cli.log(`Received event "${event}" from ${senderName} with ${dataStr}`)
         } catch (e) {
           warn(e)
         }
       })
       subscribedEvents[event] = true
-      vorpal.log(`Subscribed to event "${event}"`)
-      return callback()
+      cli.log(`Subscribed to event "${event}"`)
     },
-    unsubscribe: ({ event }, callback) => {
-      const error = vorpal.error || vorpal.log
-
+    unsubscribe: ({ event }) => {
       if (reservedEvents.indexOf(event) !== -1) {
         error(`Cannot unsubscribe from reserved event "${event}"`)
-        return callback()
+        return
       }
       if (!subscribedEvents[event]) {
         error(`Event "${event}" does not exist`)
-        return callback()
+        return
       }
       client.off(event)
       subscribedEvents[event] = false
-      vorpal.log(`Unsubscribed from event "${event}"`)
-      return callback()
+      cli.log(`Unsubscribed from event "${event}"`)
     },
     emit: ({ event, data, options }, callback) => {
-      const error = vorpal.error || vorpal.log
       const dataStr = (data != null) ? `data ${data}` : 'no data'
       let dataObj
 
@@ -79,41 +74,39 @@ module.exports = (client, vorpal) => {
         dataObj = (data != null) ? JSON.parse(data) : data
       } catch (e) {
         error('Parsing Error: data is not valid json')
-        return callback()
+        return
       }
       if (options.interval && options.stop) {
         error('Error: Cannot use both --interval and --stop in the same command')
-        return callback()
+        return
       }
 
       if (options.interval) {
         if (!(options.interval > 0)) {
           error('Error: the interval must be a positive integer')
-          return callback()
+          return
         }
         if (intervals[event]) {
           error(`Error: "${event}" is already being emitted`)
-          return callback()
+          return
         }
         intervals[event] = setInterval(
           () => { client.emit(event, dataObj) },
           options.interval * 1000
         )
-        vorpal.log(`Emitting event "${event}" every 0.5s with ${dataStr}`)
+        cli.log(`Emitting event "${event}" every 0.5s with ${dataStr}`)
       } else if (options.stop) {
         if (!intervals[event]) {
           error(`Error: interval "${event}" does not exist`)
-          return callback()
+          return
         }
         clearInterval(intervals[event])
         delete intervals[event]
-        vorpal.log(`Cleared interval for event "${event}"`)
+        cli.log(`Cleared interval for event "${event}"`)
       } else {
         client.emit(event, dataObj)
-        vorpal.log(`Emitted event "${event}" with ${dataStr}`)
+        cli.log(`Emitted event "${event}" with ${dataStr}`)
       }
-
-      return callback()
     },
     resetAll: () => {
       for (const event of Object.keys(subscribedEvents)) {
